@@ -1,12 +1,12 @@
 //Dichiaro tutte le variabili di output
-int rosso    = 12;
-int verde    = 10;
-int bianco   = 8;
-int giallo   = 6;
-//La variabile richiesta andrà incrementa ad ogni nuovo ciclo
-int richiesta  = 0;
-int tempoRG    = 0;
-int tempoBV    = 0;
+int rosso        = 12;
+int verde        = 10;
+int bianco       = 8;
+int giallo       = 6;
+int richiesta    = 0;
+int numCicliMAX  = 0;
+int tempo1       = 0;
+int tempo2       = 0;
 
 void setup() {
   Serial.begin(9600);
@@ -14,16 +14,14 @@ void setup() {
   pinMode(verde, OUTPUT);
   pinMode(giallo, OUTPUT);
   pinMode(bianco, OUTPUT);
+  richiestaCicli();
 }
 
-void richiestaValori(){
+void richiestaCicli(){
   //Comando che permette di richiedere il tempo di accensione in millisecondi delle 2 coppie di led
-  Serial.println("Quanti millisecondi vuoi che restino accesi il rosso e il giallo?");
+  Serial.println("Dopo quanti cicli vuoi che il programma ricominci?");
   while(Serial.available() == 0);
-  tempoRG = Serial.readString().toInt();
-  Serial.println("Quanti millisecondi vuoi che restino accesi il bianco e il verde?");
-  while(Serial.available() == 0);
-  tempoBV = Serial.readString().toInt();
+  numCicliMAX = Serial.readString().toInt();
 }
 
 void ciclo(int led1, int led2, int tempo){
@@ -36,12 +34,13 @@ void ciclo(int led1, int led2, int tempo){
 }
 
 void loop() {
-  //If che mi permette di richiedere i valori solo al primo avvio
-  if(richiesta == 0){
-    richiestaValori();
+  //If che mi permette di richiedere i valori solo se la variabile richiesta è uguale al numero di cicli massimo assegnato dall'utente
+  if(richiesta == numCicliMAX){
+    tempo1 = random(1000, 10000);
+    tempo2 = random(1000, 10000);
+    richiesta = 0;
   }
-  //Due cicli separati per entrambi i cicli delle due coppie di colori
-  ciclo(rosso, giallo, tempoRG);
-  ciclo(bianco, verde, tempoBV);
+  ciclo(rosso, giallo, tempo1);
+  ciclo(bianco, verde, tempo2);
   richiesta++;
 }
